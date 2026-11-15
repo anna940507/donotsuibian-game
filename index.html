@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Don’t 隨便！主辦人大作戰</title>
+<style>
+:root{--bg:#FFF8ED;--ink:#3E4959;--head:#2D3545;--brand:#E75026;--blue:#5B8DBE;--sky:#CFDDEE;--ice:#E6F0FA;--ok:#4C8C6B;--sub:#7A8697;--sun:#FDE19A;--peach:#FCD9C8;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1E2430;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1E2430}
+html,body{height:100%;margin:0;background:var(--bg);font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;overflow:hidden;touch-action:none;-webkit-user-select:none;user-select:none}
+body{display:flex;align-items:center;justify-content:center;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0);box-sizing:border-box}
+#wrap{position:relative;width:min(100vw,calc(100dvh*0.5625));aspect-ratio:9/16;background:#FFF8ED;box-shadow:0 4px 24px #0003;overflow:hidden}
+canvas{width:100%;height:100%;display:block}
+.ov{position:absolute;inset:0;background:#FFF8EDf2;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;touch-action:pan-y;padding:14px 14px 22px;box-sizing:border-box;text-align:center;color:#3E4959;overflow-y:auto;overscroll-behavior:contain}
+.ov.hide{display:none}.ov>*{flex-shrink:0;max-width:100%}.ov>:first-child{margin-top:auto}#again,#go,#ok{margin-bottom:auto}.cfw{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:6}
+
+h1{margin:0 0 6px;color:#2D3545;font-size:26px}
+h1 b{color:#E75026}
+p{margin:6px 0;font-size:14px;line-height:1.5}
+.sub{color:#7A8697;font-size:12px}
+button{margin-top:14px;background:#E75026;color:#fff;border:0;border-radius:24px;padding:12px 34px;font-size:17px;font-weight:700;font-family:inherit}
+.chip{display:inline-block;padding:3px 10px;border-radius:10px;margin:2px;font-size:12px;color:#fff}
+.card{background:#fff;border-radius:14px;padding:10px 14px;margin:6px 0;width:100%;box-sizing:border-box;text-align:left;font-size:13px;line-height:1.5}
+.big{font-size:44px;font-weight:800;color:#E75026;line-height:1}
+.rd{text-align:left;font-size:13px;margin:0;padding-left:0;list-style:none}
+.rd li{padding:2px 0;border-bottom:1px dashed #CFDDEE}
+.rd span{color:#5B8DBE;font-weight:700;margin-right:8px}
+.ai{background:#FDE19A}.roast{background:#FCD9C8}
+.pb{display:block;flex:1;height:8px;background:#CFDDEE;border-radius:4px;overflow:hidden}
+.pb i{display:block;height:100%;width:0;background:#4C8C6B;border-radius:4px;transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
+.pr{display:flex;align-items:center;gap:6px;font-size:12px;margin:5px 0}
+.pr .n{width:96px;white-space:nowrap;text-align:left}.pr .e{width:22px;font-size:16px}.pr .v{width:30px;text-align:right;font-weight:700}
+@keyframes pop{0%{transform:scale(.2);opacity:0}60%{transform:scale(1.25)}100%{transform:scale(1);opacity:1}}
+@keyframes up{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
+@keyframes fall{to{transform:translateY(720px) rotate(540deg)}}
+.pop{animation:pop .7s both}.up{animation:up .5s both}
+.cf{position:absolute;top:-14px;width:8px;height:12px;animation:fall 2.4s linear forwards;pointer-events:none}
+.bd{display:flex;justify-content:space-between;font-size:13px;padding:2px 0}.bd b{color:#4C8C6B}.bd.neg b{color:#E75026}
+#spdw{position:absolute;left:8px;bottom:calc(6px + env(safe-area-inset-bottom,0px));z-index:5;display:flex;align-items:center;gap:3px;font-size:11px;font-weight:700;color:#7A8697;background:rgba(255,255,255,.75);border-radius:12px;padding:1px 8px}#spd{width:70px;height:18px;margin:0;accent-color:#5B8DBE}
+</style>
+</head>
+<body>
+<div id="wrap">
+<canvas id="c" width="360" height="640"></canvas>
+<div id="spdw"><span>慢</span><input id="spd" type="range" min="0.5" max="1.8" step="0.05" value="1"><span>快</span></div>
+<div id="start" class="ov hide">
+  <h1>Don’t <b>隨便</b>！</h1>
+  <h1 style="font-size:20px">主辦人大作戰</h1>
+  <p>你是主辦人。<br>接住活動，排好 5 個環節：<br><b>地點 → 破冰 → 主活動 → 用餐 → 收尾</b><br><span class='sub'>重複或已滿還硬接扣 5 分<br>躲開「隨便」，提早排滿還加分！</span></p>
+  <p><span class="chip" style="background:#7A8697">都隨便</span><span class="chip" style="background:#3E4959">看大家</span> 扣血 ✕</p>
+  <p><span class="chip" style="background:#CFDDEE;color:#1F5A94;border:1.5px solid #5B8DBE">地點</span><span class="chip" style="background:#FDE19A;color:#2D3545;border:1.5px solid #D9A21B">破冰</span><span class="chip" style="background:#FCD9C8;color:#9A3412;border:1.5px solid #E75026">主活動</span><span class="chip" style="background:#D4EBDD;color:#2E6B4A;border:1.5px solid #4C8C6B">用餐</span><span class="chip" style="background:#E3DAF1;color:#2D3545;border:1.5px solid #8A6FB0">收尾</span><br><span class='sub'>方塊底色＝所屬環節，同環節用不同字色區分<br>上方格子同色，★＝必要環節</span></p>
+  <p class="sub">←→／AD 左右移動，手機請手指左右拖曳</p>
+  <button id="go">開始辦活動</button>
+</div>
+<div id="end" class="ov hide"></div>
+<div id="goal" class="ov hide"></div>
+</div>
+<script>
+const W=360,H=640,cv=document.getElementById('c'),g=cv.getContext('2d');const DPR=Math.min(3,Math.max(2,window.devicePixelRatio||1));cv.width=W*DPR;cv.height=H*DPR;
+const C={ink:'#3E4959',brand:'#5B8DBE',sky:'#CFDDEE',ice:'#E6F0FA',ok:'#4C8C6B',sub:'#7A8697',head:'#2D3545',org:'#E75026',sun:'#FDE19A',peach:'#FCD9C8',cream:'#FFF8ED'};
+const MINES=['都隨便','沒意見','隨便你','看大家','都可以','沒差啦','你決定','隨緣','再說','看情況'];
+const TARGETS=['酒吧包場','戶外公園','會議室','咖啡廳','桌遊破冰','兩真一假','自介接力','才藝表演','團康競賽','密室逃脫','精緻外燴','烤肉趴','下午茶','抽獎環節','大合照','心得分享'];
+const COL={都隨便:'#7A8697',沒意見:'#3E4959',隨便你:'#5A6577',看大家:'#2D3545',桌遊破冰:'#5B8DBE',精緻外燴:'#4C8C6B',才藝表演:'#3F9AA8',團康競賽:'#7A6FB0',兩真一假:'#3F7F9E',下午茶:'#6E9A55',大合照:'#A0703E',抽獎環節:'#B0813A'};
+const PEOPLE=[{n:'阿杰・業務部',l:'桌遊破冰'},{n:'小美・設計部',l:'精緻外燴'},{n:'Tina・行銷部',l:'才藝表演'},{n:'老王・工程部',l:'團康競賽'},{n:'小琪・人資部',l:'大合照'}];
+const ROAST={桌遊破冰:'桌遊破冰辦到第二輪，大家已經開始互相算牌了。',精緻外燴:'外燴吃了兩輪，主管的腰帶正在求救。',才藝表演:'才藝表演連演兩場，同事懷疑這是公開處刑。',團康競賽:'團康玩了兩次，隔天全公司腰痠背痛。',抽獎環節:'抽獎抽不停，沒中的人默默打開了求職網站。'};
+const MCOL=[C.sub,C.ink];
+const GRADES={
+S:{t:'完美主辦人',c:'#E75026',r:'你一個人擋下了全公司的「都隨便」，流程順到像開了外掛。散場時還有人問：「下次什麼時候？」',a:'你已是主辦界天花板，但天花板也值得偷懶。把神流程丟進 Don’t隨便 AI 平台，下次一鍵複製，準時下班。'},
+A:{t:'靠譜企劃高手',c:'#4C8C6B',r:'偶爾被「沒意見」擦傷，但大方向穩穩的。同事嘴上說隨便，心裡其實給你按了讚。',a:'離滿分只差一點點默契。讓 Don’t隨便 AI 平台先幫大家投票收斂需求，你就能把力氣花在把活動辦得更好。'},
+B:{t:'辛苦了的盲猜主辦人',c:'#5B8DBE',r:'你猜了很久，大家笑得有點禮貌。活動沒翻車，但也沒人記得。你的髮量替你默默付出。',a:'別再憑直覺盲猜口味。Don’t隨便 AI 平台幫你蒐集偏好、排好 Run-down，不用再半夜在群組問「到底想吃什麼」。'},
+C:{t:'被「隨便」淹沒的受害者',c:'#7A8697',r:'「看大家」「都可以」像潮水一樣襲來，你問了十個人得到零個答案。活動辦成了集體發呆。',a:'與其追著人問，不如讓 Don’t隨便 AI 平台代你問。一鍵收集意見，把「隨便」翻譯成具體選項。'},
+F:{t:'活動大崩潰',c:'#3E4959',r:'耐心值歸零，會場只剩尷尬的沉默與冷掉的炸雞。群組裡最後一則訊息是：「都隨便啦。」',a:'沒事，每個主辦人都崩潰過。下一次請先打開 Don’t隨便 AI 平台，讓 AI 幫你擋掉隨便，把活動救回來。'}
+};
+let st='ready',P,items,floats,keys={},tgt=null,hp,score,time,spawn,shake,got,lastT,flash,tries,bullets,fireT,banner,idx,goalAt,laneBag,typeBag,deck,slots,goal,done;
+let hits=0,dups=0,spd=0,dupLog=[],recent=[],boost=0,logoAt=[],skipN=0,appT=0,appC=0,appL=0,bldC=0,bldL=0,appBad=0;
+function reset(){P={x:W/2,y:H-190,r:20,vx:0};items=[];floats=[];hp=100;score=0;time=TOTAL;spawn=0;shake=0;got=[];flash=0;tries={};tgt=null;bullets=[];fireT=.3;banner=null;idx=0;laneBag=[];typeBag=[];deck=[];slots={};hits=0;dups=0;spd=0;dupLog=[];recent=[];boost=0;logoAt=5;skipN=0;appT=0;appC=0;appL=0;bldC=0;bldL=0;appBad=0;streak=0;comboPts=0;appPts=0;likePts=0;done=false;goal=GOALSET[0]}
+function rnd(a,b){return a+Math.random()*(b-a)}
+const TOTAL=55,SLOTS=['地點','破冰','主活動','用餐','收尾'],CAP={地點:1,破冰:2,主活動:2,用餐:1,收尾:2};
+const SLOT_OF={酒吧包場:'地點',戶外公園:'地點',會議室:'地點',咖啡廳:'地點',桌遊破冰:'破冰',兩真一假:'破冰',自介接力:'破冰',才藝表演:'主活動',團康競賽:'主活動',密室逃脫:'主活動',精緻外燴:'用餐',烤肉趴:'用餐',下午茶:'用餐',抽獎環節:'收尾',大合照:'收尾',心得分享:'收尾'};
+const GOALSET=[{n:'提升跨部門默契',need:['破冰','用餐']}];
+const SLOTC={地點:'#5B8DBE',破冰:'#D9A21B',主活動:'#E75026',用餐:'#4C8C6B',收尾:'#8A6FB0'};
+const SLOTBG={地點:'#CFDDEE',破冰:'#FDE19A',主活動:'#FCD9C8',用餐:'#D4EBDD',收尾:'#E3DAF1'};
+const TXTC=['#2D3545','#1F5A94','#9A3412','#2E6B4A'],TXT={};
+for(const sl of SLOTS)TARGETS.filter(t=>SLOT_OF[t]===sl).forEach((t,i)=>TXT[t]=TXTC[i]);
+for(const t in SLOT_OF)COL[t]=SLOTBG[SLOT_OF[t]];
+MINES.forEach((m,i)=>COL[m]=COL[m]||['#7A8697','#3E4959','#5E6B7C','#2D3545'][i%4]);
+const LIKE={桌遊破冰:'阿杰',精緻外燴:'小美',才藝表演:'Tina',團康競賽:'老王',大合照:'小琪'};
+function pickText(el){
+  if(boost<=0&&Math.random()<.1+.1*el/TOTAL)return MINES[Math.random()*MINES.length|0];
+  const open=TARGETS.filter(t=>{const a=slots[SLOT_OF[t]]||[];return a.length<CAP[SLOT_OF[t]]&&!a.includes(t)}),need=open.filter(t=>goal.need.includes(SLOT_OF[t])),filled=TARGETS.filter(t=>slots[SLOT_OF[t]]);
+  const lk=open.filter(t=>LIKE[t]),r=Math.random();let pool=boost>0?(lk.length>=3?lk:[...new Set([...lk,...need,...open])]):r<.3&&lk.length?lk:r<.5?need:r<.93?open:TARGETS;
+  if(!pool.length)pool=TARGETS;
+  return pool[Math.random()*pool.length|0]
+}
+function catchT(o){
+  const sl=SLOT_OF[o.t],a=slots[sl]=slots[sl]||[];
+  if(a.includes(o.t)||a.length>=CAP[sl]){if(a.includes(o.t))tries[o.t]=(tries[o.t]||0)+1;dups++;if(boost>0)appBad++;dupLog.push({t:o.t,sl,same:a.includes(o.t)});score-=5;shake=.2;banner={t:a.includes(o.t)?'⚠️ 「'+o.t+'」重複了！':'⚠️ 「'+sl+'」已經排滿了！',l:1.5};say('−5',o.x,o.y,C.org);return true}
+  a.push(o.t);got.push(o.t);if(boost>0){appC++;if(LIKE[o.t])appL++}else{bldC++;if(LIKE[o.t])bldL++}let pts=5;
+  if(goal.need.includes(sl))pts+=4;
+  if(LIKE[o.t]){const lb=o.b?8:2;pts+=lb;likePts+=lb;say((o.b?'⭐ ':'🤔 猜中 ')+LIKE[o.t],o.x,o.y-18,C.ok)}else if(o.b){pts+=3;likePts+=3;say('⭐ App 推薦 +3',o.x,o.y-18,C.ok)}
+  score+=pts;say('+'+pts+' '+o.t,o.x,o.y,C.ok);
+  if(SLOTS.every(s=>(slots[s]||[]).length>=CAP[s]))done=true;
+  return true
+}
+function shuf(a){for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+function addItem(){
+  g.font='bold 17px "PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif';
+  const n=idx++,el=TOTAL-time;let o;
+  {
+    let t;
+    let k2=0;do{t=pickText(el)}while(recent.includes(t)&&k2++<12);recent.push(t);if(recent.length>9)recent.shift();
+    o={k:MINES.includes(t)?'m':'t',t,col:COL[t],tc:TXT[t]||'#fff'}
+  }
+  {o.w=Math.max(g.measureText(o.t).width+24,90);o.h=o.k==='t'?42:34}
+  let bx=W/2,bd=-1e9;
+  for(let q=0;q<16;q++){const x=rnd(o.w/2+4,W-o.w/2-4);let d=1e9;for(const m of items)if(m.y<200)d=Math.min(d,Math.abs(x-m.x)-(o.w+m.w)/2);if(d>bd){bd=d;bx=x}}
+  if(bd<56&&skipN<2){skipN++;return false}
+  skipN=0;o.x=bx;
+  o.y=boost>0?150:110;o.v=(rnd(80,95)+el/TOTAL*20)*1;
+  items.push(o)
+}
+function addBonus(){
+  g.font='bold 17px "PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif';
+  const op=TARGETS.filter(t=>{const a=slots[SLOT_OF[t]]||[];return a.length<CAP[SLOT_OF[t]]&&!a.includes(t)});
+  let pool=op.filter(t=>LIKE[t]);if(!pool.length)pool=op;
+  const pk=[];for(const t of shuf(pool.slice())){const sl=SLOT_OF[t],left=CAP[sl]-(slots[sl]||[]).length;if(pk.filter(x=>SLOT_OF[x]===sl).length<left)pk.push(t);if(pk.length>=2)break}
+  pk.forEach((t,i)=>{const o={k:'t',b:1,t,col:COL[t],tc:TXT[t]||'#fff'};o.w=Math.max(g.measureText(t).width+24,90);o.h=42;o.x=i?rnd(220,300):rnd(60,140);o.y=i?70:110;o.v=rnd(80,95)+(TOTAL-time)/TOTAL*20;items.push(o);say('⭐',o.x,o.y+24,C.sun)})
+}
+function say(t,x,y,col){floats.push({t,x,y,col,l:1})}
+function hitRect(o){
+  const cx=Math.max(o.x-o.w/2,Math.min(P.x,o.x+o.w/2)),cy=Math.max(o.y-o.h/2,Math.min(P.y,o.y+o.h/2));
+  return (P.x-cx)**2+(P.y-cy)**2<P.r*P.r
+}
+function upd(dt){
+  time-=dt;spawn-=dt*spdM;
+  if(TOTAL-time>=logoAt){logoAt+=9;items.push({k:'a',t:'',w:54,h:54,x:rnd(40,320),y:100,v:rnd(80,95)+(TOTAL-time)/TOTAL*20})}
+  if(spawn<=0){if(addItem()===false)spawn+=.5;else spawn+=(2.4-.5*(TOTAL-time)/TOTAL)*(boost>0?.65:1)}
+  let dx=(keys.ArrowRight||keys.d||keys.D?1:0)-(keys.ArrowLeft||keys.a||keys.A?1:0);
+  let dy=(keys.ArrowDown||keys.s||keys.S?1:0)-(keys.ArrowUp||keys.w||keys.W?1:0);
+  if(dx){P.x+=dx*300*dt;tgt=null}
+  else if(tgt){P.x+=(tgt.x-P.x)*Math.min(1,16*dt)}
+  P.x=Math.max(P.r,Math.min(W-P.r,P.x));P.y=H-190;
+  for(const o of items){o.y+=o.v*dt*spdM}
+  for(const o of items){
+    if(o.dead||!hitRect(o))continue;o.dead=1;
+    if(o.k==='m'){{hp-=15;hits++;streak=0;try{navigator.vibrate&&navigator.vibrate(60)}catch(_){}if(boost>0)appBad++;score-=8;shake=.3;flash=.25;say('−8 敷衍！',o.x,o.y,C.org)}}
+    else if(o.k==='t'){
+      catchT(o);
+    }else{hp=Math.min(100,hp+10);for(const m of items){if(m.dead)continue;if(m.k==='m'){m.dead=1;say('✕',m.x,m.y,C.sub)}else if(m.k==='t'){const a=slots[SLOT_OF[m.t]]||[];if(a.includes(m.t)||a.length>=CAP[SLOT_OF[m.t]]){m.dead=1;say('✕ 重複',m.x,m.y,C.sub)}}}banner={t:'📱 App 啟動！清掉雷區，2 個加分方塊降落',l:1.6};say('📱 收集喜好',o.x,o.y,C.brand);addBonus()}
+  }
+  items=items.filter(o=>!o.dead&&o.y<H+30);
+  for(const f of floats){f.y-=40*dt;f.l-=dt*.9}
+  floats=floats.filter(f=>f.l>0);
+  shake=Math.max(0,shake-dt);flash=Math.max(0,flash-dt);if(boost>0)appT+=Math.min(dt,boost);boost=Math.max(0,boost-dt);if(banner)banner.l-=dt;
+  if(hp<=0||time<=0||done){if(done){spd=Math.min(8,Math.round(time/(TOTAL*.4)*8));score+=spd;if(!hits&&!dups)score+=6}else for(const s of goal.need)if((slots[s]||[]).length<CAP[s])score-=5;hp=Math.max(0,hp);time=Math.max(0,time);finish()}
+}
+function rr(x,y,w,h,r){g.beginPath();g.roundRect?g.roundRect(x,y,w,h,r):g.rect(x,y,w,h)}
+function logo(x,y){const t=performance.now()/1000;g.save();g.translate(x,y+Math.sin(t*5)*2);g.scale(1.2,1.2);
+  g.fillStyle=C.sun;g.globalAlpha=.65;g.beginPath();g.arc(0,0,27+Math.sin(t*6)*2,0,7);g.fill();g.globalAlpha=1;
+  g.fillStyle=C.cream;g.beginPath();g.arc(0,0,23,0,7);g.fill();g.strokeStyle=C.brand;g.lineWidth=2;g.stroke();
+  g.strokeStyle=C.ink;g.lineWidth=3;rr(-17,-10,24,24,5);g.stroke();g.fillStyle=C.ink;g.fillRect(-12,-13,3,6);g.fillRect(-2,-13,3,6);
+  g.fillStyle=C.sky;for(let i=0;i<3;i++)for(let j=0;j<2;j++)g.fillRect(-12+i*6,-2+j*6,4,4);
+  g.fillStyle=C.brand;g.beginPath();g.moveTo(14,-6);g.lineTo(-2,8);g.lineTo(6,8);g.lineTo(8,16);g.closePath();g.fill();
+  g.strokeStyle=C.ink;g.lineWidth=2;g.beginPath();g.moveTo(10,-10);g.lineTo(15,-17);g.moveTo(10,-10);g.lineTo(19,-8);g.stroke();
+  g.fillStyle=C.sky;for(const [a,b] of [[10,-10],[15,-17],[19,-8]]){g.beginPath();g.arc(a,b,3,0,7);g.fill();g.stroke()}
+  g.restore()}
+function draw(){
+  g.setTransform(DPR,0,0,DPR,0,0);
+  g.save();
+  if(shake>0)g.translate(rnd(-5,5),rnd(-5,5));
+  g.fillStyle=C.cream;g.fillRect(-10,-10,W+20,H+20);if(boost>0){g.fillStyle='rgba(91,141,190,.16)';g.fillRect(-10,-10,W+20,H+20)}
+  for(const o of items){
+    if(o.k==='a'){logo(o.x,o.y);continue}
+    if(o.b){rr(o.x-o.w/2-4,o.y-o.h/2-4,o.w+8,o.h+8,13);g.fillStyle='#FFC93C';g.fill()}
+    rr(o.x-o.w/2,o.y-o.h/2,o.w,o.h,10);g.fillStyle=o.col;g.fill();if(o.k==='t'){g.strokeStyle=SLOTC[SLOT_OF[o.t]];g.lineWidth=2.5;g.stroke()}
+    g.fillStyle=o.tc;g.textAlign='center';g.textBaseline='middle';if(o.k==='t'){const sl=SLOT_OF[o.t],tag=(goal.need.includes(sl)?'★':'')+sl;g.font='bold 17px "PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif';g.fillText(o.t,o.x,o.y+2);g.font='bold 10px "PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif';const tw=g.measureText(tag).width+10;rr(o.x-o.w/2+6,o.y-o.h/2-7,tw,14,7);g.fillStyle=SLOTC[sl];g.fill();g.fillStyle=sl==='破冰'?'#2D3545':'#fff';g.textAlign='left';g.fillText(tag,o.x-o.w/2+11,o.y-o.h/2);if(LIKE[o.t]&&o.b){const lt='👍'+LIKE[o.t],lw=g.measureText(lt).width+8;rr(o.x+o.w/2-lw-6,o.y-o.h/2-7,lw,14,7);g.fillStyle='#fff';g.fill();g.strokeStyle=SLOTC[sl];g.lineWidth=1;g.stroke();g.fillStyle=C.head;g.fillText(lt,o.x+o.w/2-lw-2,o.y-o.h/2)}g.textAlign='center'}else{g.font='bold 17px "PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif';g.fillText(o.t,o.x,o.y+1)}
+  }
+  g.fillStyle=C.org;g.beginPath();g.arc(P.x,P.y,P.r,0,7);g.fill();
+  g.fillStyle='#000';g.beginPath();g.arc(P.x-5,P.y-3,2.4,0,7);g.arc(P.x+5,P.y-3,2.4,0,7);g.fill();
+  g.strokeStyle='#000';g.lineWidth=1.8;g.beginPath();g.arc(P.x,P.y+3,4,.2,Math.PI-.2);g.stroke();
+  for(const f of floats){g.globalAlpha=Math.max(0,f.l);g.fillStyle=f.col;g.font='bold 14px "PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif';g.textAlign='center';g.fillText(f.t,f.x,f.y);g.globalAlpha=1}
+  if(flash>0){g.fillStyle='rgba(231,80,38,'+flash*.5+')';g.fillRect(0,0,W,H)}
+  if(banner&&banner.l>0){const sc=1+Math.max(0,banner.l-1.1)*1.2;g.save();g.globalAlpha=Math.min(1,banner.l*3);g.translate(W/2,290);g.scale(sc,sc);g.font='bold 20px "PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif';const bw=g.measureText(banner.t).width+36;rr(-bw/2,-22,bw,44,22);g.fillStyle=C.org;g.fill();g.fillStyle='#fff';g.textAlign='center';g.textBaseline='middle';g.fillText(banner.t,0,1);g.restore()}
+  g.restore();
+  g.fillStyle=C.ice;g.fillRect(0,0,W,138);g.fillStyle=C.sky;g.fillRect(0,138,W,2);
+  g.textBaseline='middle';g.textAlign='left';g.fillStyle=C.head;g.font='bold 15px "PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif';
+  g.fillText('🎯 '+goal.n,12,13);
+  if(boost>0){g.fillStyle=C.brand;g.font='bold 13px "PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif';g.textAlign='right';g.fillText('📱 App '+boost.toFixed(1)+'s',W-126,13);g.textAlign='left'}
+  g.textAlign='left';g.fillStyle=C.head;g.font='bold 15px "PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif';g.fillText('滿意度 '+Math.max(0,Math.min(100,score)),12,32);
+  g.font='bold 13px "PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif';g.fillStyle=C.sub;g.fillText('耐心',138,32);
+  rr(172,27,90,10,5);g.fillStyle=C.sky;g.fill();rr(172,27,90*hp/100,10,5);g.fillStyle=hp>40?C.ok:C.org;g.fill();
+  g.textAlign='right';g.fillStyle=C.head;g.font='bold 15px "PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif';g.fillText(Math.ceil(time)+' 秒',W-12,32);
+  const hb=(sl,x,y,w,h,one)=>{const cap=CAP[sl],a=slots[sl]||[],nd=goal.need.includes(sl),full=a.length>=cap,tt=(nd?'★':'')+sl+(full?' ✓':'');
+    rr(x,y,w,h,8);g.fillStyle=SLOTBG[sl];g.fill();g.strokeStyle=SLOTC[sl];g.lineWidth=full?3:1.5;g.setLineDash(a.length?[]:[3,3]);g.stroke();g.setLineDash([]);
+    g.fillStyle=C.head;g.font='bold 13px "PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif';
+    if(one){g.textAlign='left';g.fillText(tt,x+9,y+h/2);const t=a[0];g.textAlign='right';g.font='bold 14px "PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif';g.fillStyle=t?TXT[t]:'#9AA5B5';g.fillText(t||'・・・',x+w-9,y+h/2)}
+    else{g.textAlign='center';g.fillText(tt,x+w/2,y+11);for(let j=0;j<cap;j++){const t=a[j];g.font='bold 14px "PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif';g.fillStyle=t?TXT[t]:'#9AA5B5';g.fillText(t||'・・・',x+w/2,y+28+j*17)}}};
+  hb('地點',8,46,170,28,true);hb('用餐',182,46,170,28,true);
+  hb('破冰',8,78,112,54,false);hb('主活動',124,78,112,54,false);hb('收尾',240,78,112,54,false);
+  g.textAlign='left';
+}
+function loop(t){
+  const dt=Math.min(.05,(t-lastT)/1000||0);lastT=t;
+  if(st==='play')upd(dt);
+  if(st!=='ready')draw();
+  requestAnimationFrame(loop)
+}
+function grade(){
+  if(hp<=0)return 'F';
+  const s=Math.max(0,Math.min(100,score));
+  return s>=90?'S':s>=70?'A':s>=50?'B':s>=30?'C':'F'
+}
+function sats(s){const raw=PEOPLE.map((p,i)=>{const n=got.filter(x=>x===p.l).length;return (n?(n>1?14:10):-10)+[2,-2,3,-3,0][i]-(tries[p.l]>2?6:0)}),m=raw.reduce((a,b)=>a+b)/raw.length;return raw.map(v=>Math.max(0,Math.min(100,Math.round(s-m+v))))}
+let lastRes=null,spdM=1,streak=0,comboPts=0,appPts=0,likePts=0;
+async function cardBlob(d){
+  const W2=720,pad=36,lh=34,W3=W2-pad*2-48;
+  const wrapT=(c,t)=>{const o=[];let cur='';for(const ch of String(t)){if(c.measureText(cur+ch).width>W3){o.push(cur);cur=ch}else cur+=ch}if(cur)o.push(cur);return o};
+  const box=(c,y,h,bg)=>{c.fillStyle=bg||'#fff';c.beginPath();if(c.roundRect)c.roundRect(pad,y,W2-pad*2,h,22);else c.rect(pad,y,W2-pad*2,h);c.fill()};
+  const sec=(c,title,lines,y,bg)=>{const h=64+lines.length*lh+16;box(c,y,h,bg);c.textAlign='left';c.fillStyle='#2D3545';c.font='bold 28px "PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif';c.fillText(title,pad+24,y+18);c.font='26px "PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif';lines.forEach((l,i)=>{c.fillStyle=l.col||'#3E4959';c.fillText(l.t,pad+24,y+64+i*lh)});return y+h+20};
+  const paint=c=>{
+    c.fillStyle='#FFF8ED';c.fillRect(0,0,W2,6000);c.textBaseline='top';c.textAlign='center';let y=30;
+    c.fillStyle='#2D3545';c.font='bold 30px "PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif';c.fillText('Don’t 隨便！主辦人大作戰',W2/2,y);y+=56;
+    c.fillStyle=d.G.c;c.font='bold 46px "PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif';c.fillText(d.k+' 級｜'+d.G.t,W2/2,y);y+=70;
+    c.fillStyle='#E75026';c.font='bold 120px "PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif';c.fillText(String(d.s),W2/2,y);y+=132;
+    c.fillStyle='#7A8697';c.font='24px "PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif';c.fillText('活動滿意度 / 100　目標：'+d.goal,W2/2,y);y+=52;
+    c.font='26px "PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif';
+    if(d.roast)y=sec(c,'🙄 吐槽時間',wrapT(c,d.roast).map(t=>({t,col:'#9A3412'})),y,'#FCD9C8');
+    c.font='26px "PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif';y=sec(c,'活動 Run-down',d.rows.map(t=>({t})),y);
+    const h=64+d.ps.length*44+16;box(c,y,h);c.textAlign='left';c.fillStyle='#2D3545';c.font='bold 28px "PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif';c.fillText('參與者滿意度　平均 '+d.avg+'%',pad+24,y+18);
+    d.ps.forEach((r,i)=>{const yy=y+64+i*44;c.font='24px "PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif';c.fillStyle='#3E4959';c.textAlign='left';c.fillText(r[0],pad+24,yy);c.fillStyle='#CFDDEE';c.fillRect(300,yy+6,290,18);c.fillStyle='#4C8C6B';c.fillRect(300,yy+6,290*r[1]/100,18);c.fillStyle='#2D3545';c.textAlign='right';c.fillText(String(r[1]),W2-pad-24,yy)});
+    y+=h+20;c.textAlign='left';c.font='26px "PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif';
+    y=sec(c,'💬 評語',wrapT(c,d.cm+' '+d.gr).map(t=>({t})),y);
+    c.font='26px "PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif';y=sec(c,'📱 Don’t 隨便 AI 建議',wrapT(c,d.ai).map(t=>({t})),y,'#FDE19A');
+    c.textAlign='center';c.fillStyle='#7A8697';c.font='22px "PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif';c.fillText('Don’t 隨便 App｜擺脫敷衍，辦出每個人都喜歡的活動',W2/2,y+4);return y+52};
+  const m=document.createElement('canvas');m.width=W2;m.height=100;const H2=paint(m.getContext('2d'));
+  const cv2=document.createElement('canvas');cv2.width=W2;cv2.height=H2;paint(cv2.getContext('2d'));
+  return await new Promise(r=>cv2.toBlob(r,'image/png'))
+}
+async function saveCard(btn){
+  try{
+    const dl=window.claude&&claude.use?await claude.use('downloads'):null;
+    if(!dl){btn.textContent='請直接截圖保存';return}
+    btn.textContent='產生中…';
+    await dl.save({filename:'dont-suibian-result.png',data:await cardBlob(lastRes)});
+    btn.textContent='✅ 已儲存'
+  }catch(e){btn.textContent=e&&e.code==='declined'?'💾 儲存結果照片':'儲存失敗，請改用截圖'}
+}
+function finish(){
+  st='over';draw();
+  const s=Math.max(0,Math.min(100,score)),k=grade(),G=GRADES[k];
+  let rm=16*60,ri=0;const hm=m=>(m/60|0)+':'+('0'+m%60).slice(-2),DUR={破冰:15,主活動:30,用餐:60,收尾:15},li=(tm,txt,star)=>'<li class="up" style="animation-delay:'+(.8+ri++*.08)+'s"><span>'+tm+'</span>'+txt+(star?' ⭐':'')+'</li>',loc=(slots['地點']||[])[0];
+  const rd=li('📍','地點｜'+(loc||'<em style="color:#E75026">⚠️ 未決定</em>'),false)+dupLog.filter(d=>d.sl==='地點').map(d=>li('📍','地點｜'+d.t+' <em style="color:#E75026">'+(d.same?'🔁 又訂了一次':'➕ 硬塞的')+'</em>')).join('')+SLOTS.filter(x=>x!=='地點').map(sl=>{const a=slots[sl]||[];let h='';for(let j=0;j<CAP[sl];j++){const t=a[j];h+=li(hm(rm),sl+'｜'+(t||'<em style="color:#E75026">⚠️ 空白</em>'),t&&goal.need.includes(sl));rm+=DUR[sl]}h+=dupLog.filter(d=>d.sl===sl).map(d=>{const r=li(hm(rm),sl+'｜'+d.t+' <em style="color:#E75026">'+(d.same?'🔁 又排了一次':'➕ 硬塞的')+'</em>');rm+=DUR[sl];return r}).join('');return h}).join('');
+  const sv=sats(s),ps=PEOPLE.map((p,i)=>[p,sv[i]]),avg=Math.round(ps.reduce((a,b)=>a+b[1],0)/ps.length);
+  const face=v=>v>=80?'😍':v>=60?'🙂':v>=40?'😐':'😣';
+  const pr=ps.map(([p,v],i)=>'<div class="pr up" style="animation-delay:'+(1.3+i*.12)+'s"><span class="n">'+p.n+'</span><span class="e">'+face(v)+'</span><span class="pb"><i data-w="'+v+'"></i></span><span class="v">'+v+'</span></div>').join('');
+  const rep=Object.keys(tries).filter(t=>tries[t]>=1);
+  const likeN=PEOPLE.filter(p=>got.includes(p.l)).length,miss=PEOPLE.filter(p=>!got.includes(p.l)),needN=goal.need.reduce((n,x)=>n+(slots[x]||[]).length,0),missN=done?0:goal.need.filter(x=>(slots[x]||[]).length<CAP[x]).length,nm=p=>p.n.split('・')[0];
+  const bd=[['🧩 流程完整 '+got.length+'/8','+'+5*got.length],['🎯 目標必要環節','+'+4*needN],['👍 貼心偏好 '+likeN+'/5','+'+likePts],['⚡ 速度','+'+spd]];if(done&&!hits&&!dups)bd.push(['✨ 零失誤','+6']);
+  if(hits)bd.push(['💢 踩到隨便 ×'+hits,'−'+8*hits]);if(dups)bd.push(['🔁 重複安排 ×'+dups,'−'+5*dups]);if(missN)bd.push(['⚠️ 目標環節沒排滿','−'+5*missN]);if(score<0)bd.push(['📏 最低 0 分','+'+(-score)]);if(score>100)bd.push(['🎉 超出最高分','多 '+(score-100)+' 分']);
+  const bdh=bd.map(r=>'<div class="bd'+(r[1][0]==='−'?' neg':'')+'"><span>'+r[0]+'</span><b>'+r[1]+'</b></div>').join('');
+  let cm;
+  if(hp<=0)cm='被「隨便」連環轟炸 '+hits+' 次，主辦人的耐心先走一步。';
+  else if(!done)cm='時間到了還有 '+(8-got.length)+' 個空位沒排滿，現場出現了尷尬的空檔。';
+  else if(hits+dups===0&&likeN>=4)cm='流程完整、零失誤，連大家想要的都猜中了，簡直會讀心術。';
+  else if(hits+dups===0)cm='流程完整、零失誤！但有 '+miss.length+' 位同事的需求沒顧到：'+miss.map(p=>nm(p)+'想要「'+p.l+'」').join('、')+'。';
+  else cm='流程排滿了，但踩到「隨便」'+hits+' 次、重複安排 '+dups+' 次，大家的耐心被消耗了不少。';
+  const bb=0,cmp='';const cmp0='<div class="card up" style="animation-delay:2s;background:#E6F0FA"><b>📱 有沒有 Don’t 隨便 App 的差別</b><div class="bd"><span>🙈 沒開（盲猜）</span><b style="color:#3E4959">命中 '+bldL+'/'+bldC+'・踩雷 '+hits+'・重複 '+dups+'</b></div>'+(appC?'<div class="bd"><span>🙌 開啟 '+Math.round(appT)+' 秒</span><b>命中 '+appL+'/'+appC+'・踩雷＋重複 '+appBad+'</b></div>':'<div class="bd"><span>🙌 開啟</span><b style="color:#7A8697">這局沒接到 Logo</b></div>')+'<div class="sub" style="margin-top:4px">命中＝接到同事想要的活動。先收集大家的喜好，就不用靠盲猜。</div></div>';
+  const hint=miss.length&&hp>0?'<br><span class="sub">💡 接到 Logo 啟動 App，就能看到大家想要什麼。</span>':'';
+  const ro=rep.length?'<div class="card roast up" style="animation-delay:.7s">🙄 '+rep.map(t=>ROAST[t]||'「'+t+'」硬塞第二次，時間表在哭。').join('')+(rep.length>2?'整場像同一個點子換了五種包裝。':'')+'</div>':'';
+  lastRes={k,G,s,goal:goal.n,rows:rd.replace(/<\/span>/g,' ').split('</li>').map(x=>x.replace(/<[^>]+>/g,'').trim()).filter(Boolean),ps:ps.map(r=>[r[0].n,r[1]]),avg,roast:ro.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim(),cm,gr:G.r,ai:G.a};
+  const e=document.getElementById('end');
+  e.innerHTML='<h1 class="pop" style="margin:0 0 6px;font-size:23px;animation-delay:.2s;color:'+G.c+'">'+k+' 級｜'+G.t+'</h1>'
+  +'<div class="big pop" style="animation-delay:.5s"><span id="cnt">0</span><small style="font-size:18px"> / 100</small></div><div class="sub">活動滿意度</div>'
+  +ro
+  +'<div class="card up" style="animation-delay:.9s;margin-top:10px"><b>活動 Run-down（目標：'+goal.n+'）</b><ol class="rd">'+rd+'</ol></div>'
+  +'<div class="card up" style="animation-delay:1.2s"><b>參與者滿意度　平均 '+avg+'%</b>'+pr+'</div>'
+  +'<div class="card up" style="animation-delay:1.8s"><b>💬 評語</b><br>'+cm+'<br>'+G.r+hint+'<div style="margin-top:8px;padding-top:6px;border-top:1px dashed #CFDDEE"><b>📋 分數怎麼來的</b>'+bdh+'</div></div>'
+  +cmp
+  +'<div class="card ai up" style="animation-delay:2.3s"><b>Don’t隨便 AI 建議：</b>'+G.a+'</div><button id="save" style="background:#4C8C6B">💾 儲存結果照片</button><button id="again">再玩一次</button>';
+  document.getElementById('save').onclick=()=>saveCard(document.getElementById('save'));
+  banner={t:done?'🎉 流程排滿了！':hp<=0?'💥 耐心歸零！':'⏰ 時間到！',l:1};setTimeout(()=>{e.classList.remove('hide');e.scrollTop=0},800);
+  let n=0;const cn=document.getElementById('cnt');let iv;setTimeout(()=>{iv=setInterval(()=>{n=Math.min(s,n+Math.max(1,s/40|0));cn.textContent=n;if(n>=s)clearInterval(iv)},30)},800);
+  setTimeout(()=>e.querySelectorAll('.pb i').forEach(b=>b.style.width=b.dataset.w+'%'),1900);
+  if(k==='S'||k==='A'){const cw=document.createElement('div');cw.className='cfw';for(let i=0;i<40;i++){const c=document.createElement('i');c.className='cf';c.style.left=rnd(0,100)+'%';c.style.background=[C.org,C.sun,C.brand,C.ok][i%4];c.style.animationDelay=(rnd(0,1.2)+.8)+'s';cw.appendChild(c)}document.getElementById('wrap').appendChild(cw)}
+  document.getElementById('again').onclick=begin
+}
+function brief(){
+  st='brief';const gl=document.getElementById('goal');
+  const chip=(t,bg,fg,x='')=>`<span style="display:inline-block;padding:7px 12px;border-radius:10px;background:${bg};color:${fg};font-weight:800;font-size:15px;${x}">${t}</span>`;
+  const lab=(t,c)=>`<div style="font-weight:800;font-size:15px;color:${c};margin-top:5px">${t}</div>`;
+  const col=(inner)=>`<div style="flex:1;text-align:center">${inner}</div>`;
+  const row=(inner)=>`<div class="card" style="display:flex;align-items:center;gap:6px;padding:12px 8px">${inner}</div>`;
+  const arrow='<div style="font-size:22px;color:#7A8697">➜</div>';
+  gl.innerHTML=`<h1 style="font-size:26px">Don’t <b>隨便</b>！</h1>
+  <div class="card" style="text-align:center;margin-top:8px"><span class="sub">🎯 活動目標　</span><b style="font-size:19px;color:#2D3545">${goal.n}</b></div>
+  ${row(col(`<div style="display:flex;justify-content:center;align-items:center;gap:10px;font-size:22px;color:#7A8697">◀<span style="width:34px;height:34px;border-radius:50%;background:#E75026;display:inline-block;position:relative"><i style="position:absolute;left:10px;top:12px;width:5px;height:5px;border-radius:50%;background:#000"></i><i style="position:absolute;right:10px;top:12px;width:5px;height:5px;border-radius:50%;background:#000"></i></span>▶</div>${lab('左右滑動','#2D3545')}`))}
+  ${row(col(`${chip('桌遊破冰','#FDE19A','#9A3412')}${lab('接住 ✓ +5','#4C8C6B')}`)+col(`${chip('隨便','#5E6B7C','#fff')}${lab('躲開 ✕ −8','#E75026')}`)+col(`${chip('桌遊破冰','#FDE19A','#9A3412','opacity:.45;text-decoration:line-through')}${lab('重複 ✕ −5','#E75026')}`))}
+  ${row(col(`<span style="display:inline-block;width:46px;height:46px;line-height:46px;border-radius:50%;background:#E75026;font-size:24px">📱</span>${lab('接 Logo','#2D3545')}`)+arrow+col(`<div style="display:flex;justify-content:center;gap:4px">${chip('隨便','#5E6B7C','#fff','opacity:.4;font-size:12px;padding:5px 8px;text-decoration:line-through')}${chip('重複','#FDE19A','#9A3412','opacity:.4;font-size:12px;padding:5px 8px;text-decoration:line-through')}</div>${lab('清場','#7A8697')}`)+arrow+col(`<div style="position:relative;display:inline-block">${chip('團康競賽','#CFDDEE','#2D3545','box-shadow:0 0 0 4px #FFC93C;font-size:13px;padding:6px 9px')}<span style="position:absolute;right:-6px;top:-13px;background:#fff;border:1px solid #7A8697;border-radius:7px;font-size:10px;padding:1px 4px">👍老王</span></div>${lab('發光 +8','#B7791F')}`))}
+  <button id="ok">開始</button>`;
+  gl.classList.remove('hide');document.getElementById('ok').onclick=()=>{gl.classList.add('hide');st='play'}
+}
+function begin(){
+  document.querySelectorAll('.cfw').forEach(x=>x.remove());reset();document.getElementById('start').classList.add('hide');document.getElementById('end').classList.add('hide');brief()
+}
+document.getElementById('go').onclick=begin;
+addEventListener('keydown',e=>{if(e.key===' ')e.preventDefault();keys[e.key]=1;if(e.key.startsWith('Arrow'))e.preventDefault()});
+addEventListener('blur',()=>{keys={}});document.addEventListener('contextmenu',e=>e.preventDefault());
+
+addEventListener('keyup',e=>keys[e.key]=0);
+let dragX=0,dragP=0;function pt(e){const r=cv.getBoundingClientRect();tgt={x:dragP+(e.clientX-dragX)/r.width*W*1.4}}
+cv.addEventListener('pointerdown',e=>{dragX=e.clientX;dragP=P.x;tgt={x:P.x};cv.setPointerCapture(e.pointerId)});
+cv.addEventListener('pointermove',e=>{if(e.buttons||e.pointerType==='touch')pt(e)});
+document.getElementById('spd').addEventListener('input',e=>{spdM=+e.target.value});
+document.addEventListener('visibilitychange',()=>{lastT=performance.now()});
+reset();brief();requestAnimationFrame(loop);
+</script>
+</body>
+</html>
