@@ -237,14 +237,38 @@ async function cardBlob(d){
   const cv2=document.createElement('canvas');cv2.width=W2;cv2.height=H2;paint(cv2.getContext('2d'));
   return await new Promise(r=>cv2.toBlob(r,'image/png'))
 }
+function showPreview(blob){
+  const rd=new FileReader();
+  rd.onload=()=>{
+    const old=document.getElementById('pv');if(old)old.remove();
+    const pv=document.createElement('div');pv.id='pv';pv.className='ov';pv.style.cssText='z-index:20;background:#FFF8EDf8;-webkit-user-select:auto;user-select:auto';
+    pv.innerHTML='<p style="font-weight:700;font-size:15px;margin:0 0 8px">👇 長按圖片 → 儲存到相簿</p><img alt="結果照片" src="'+rd.result+'" style="width:100%;max-width:100%;border-radius:12px;box-shadow:0 2px 12px #0003;-webkit-touch-callout:default;-webkit-user-select:auto;user-select:auto"><button id="pvx" style="background:#7A8697">關閉</button>';
+    document.getElementById('wrap').appendChild(pv);
+    document.getElementById('pvx').onclick=()=>pv.remove();
+  };
+  rd.readAsDataURL(blob);
+}
 async function saveCard(btn){
+  const orig='💾 儲存結果照片';
+  btn.textContent='產生中…';
+  let blob;
+  try{blob=await cardBlob(lastRes)}catch(e){btn.textContent='產生失敗，請改用截圖';return}
+  if(!blob){btn.textContent='產生失敗，請改用截圖';return}
+  // 1) 平台提供的下載功能
   try{
     const dl=window.claude&&claude.use?await claude.use('downloads'):null;
-    if(!dl){btn.textContent='請直接截圖保存';return}
-    btn.textContent='產生中…';
-    await dl.save({filename:'dont-suibian-result.png',data:await cardBlob(lastRes)});
-    btn.textContent='✅ 已儲存'
-  }catch(e){btn.textContent=e&&e.code==='declined'?'💾 儲存結果照片':'儲存失敗，請改用截圖'}
+    if(dl){await dl.save({filename:'dont-suibian-result.png',data:blob});btn.textContent='✅ 已儲存';return}
+  }catch(e){if(e&&e.code==='declined'){btn.textContent=orig;return}}
+  // 2) 手機分享面板（可選「儲存影像」）
+  try{
+    const file=new File([blob],'dont-suibian-result.png',{type:'image/png'});
+    if(navigator.canShare&&navigator.canShare({files:[file]})){
+      await navigator.share({files:[file],title:'Don’t 隨便！主辦人大作戰'});
+      btn.textContent='✅ 已完成';return
+    }
+  }catch(e){if(e&&e.name==='AbortError'){btn.textContent=orig;return}}
+  // 3) 最後手段：顯示圖片，長按儲存
+  showPreview(blob);btn.textContent=orig
 }
 function finish(){
   st='over';draw();
